@@ -2,6 +2,11 @@ from django.shortcuts import render
 from . import util
 from django.shortcuts import redirect
 from django.urls import reverse
+from django import forms
+
+class NewTextAreaForm(forms.Form):
+    title = forms.CharField(label="Title")
+    textarea = forms.CharField(label="", widget=forms.Textarea())
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
@@ -36,3 +41,30 @@ def search(request):
             "searchText": searchText,
             "matches": matches
         })
+
+def newPage(request):
+    # execute this if user is submitting form
+    if request.method == "POST":
+        form = NewTextAreaForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            textarea = form.cleaned_data["textarea"]
+            # check if page already exists; print error if exists, save otherwise
+            if util.get_entry(title):
+                return render(request, "encyclopedia/newPage.html", {
+                    "form": form,
+                    "errorMsg": f"Page \"{title}\" already exists."
+                })
+            else:
+                util.save_entry(title, textarea)
+                return entry(request, title)
+        else:
+            # return back form with existing values if not valid
+            return render(request, "encyclopedia/newPage.html", {
+                "form": form,
+                "errorMsg": "Invalid form. Please try again."
+            })
+    # execute this if user simply visiting page (not submitting form)
+    return render(request, "encyclopedia/newPage.html", {
+        "form": NewTextAreaForm()
+    })
