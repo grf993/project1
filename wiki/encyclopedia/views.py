@@ -7,7 +7,11 @@ def index(request):
         "entries": util.list_entries()
     })
 
-def displayEntry(request, title):
+def entry(request, title):
+    '''
+    Return the entry text if util.get_entry finds a corresponding entry;
+    return the 404 page if None is returned.
+    '''
     if util.get_entry(title):
         return render(request, "encyclopedia/entry.html", {
             "title": title,
