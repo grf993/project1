@@ -4,6 +4,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django import forms
 import random
+import markdown2
 
 class NewTextAreaForm(forms.Form):
     title = forms.CharField(label="Title")
@@ -20,9 +21,10 @@ def entry(request, title):
     return the 404 page if None is returned.
     '''
     if util.get_entry(title):
+        md = markdown2.markdown(util.get_entry(title))
         return render(request, "encyclopedia/entry.html", {
             "title": title,
-            "entry": util.get_entry(title)
+            "entry": md
         })
     else:
         return render(request, "encyclopedia/404.html", {

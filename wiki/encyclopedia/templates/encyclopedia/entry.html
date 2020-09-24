@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block body %}
-    {{ entry }}
-    <br><br>
+    {{ entry|safe }}
+    <br>
     <form action="{% url 'getTitleFromEntry' %}" method="post">
         {% csrf_token %}
         <input type="hidden" name="title" value="{{ title }}">
