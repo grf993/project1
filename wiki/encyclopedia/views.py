@@ -68,3 +68,29 @@ def newPage(request):
     return render(request, "encyclopedia/newPage.html", {
         "form": NewTextAreaForm()
     })
+
+def editPage(request):
+    '''
+    Similar to newPage function but without same-title check and GET request handling
+    '''
+    if request.method == "POST":
+        form = NewTextAreaForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            textarea = form.cleaned_data["textarea"]
+            util.save_entry(title, textarea)
+            return entry(request, title)
+        else:
+            return render(request, "encyclopedia/editPage.html", {
+                "form": form,
+                "errorMsg": "Invalid form. Please try again."
+            })
+
+def getTitleFromEntry(request):
+    if request.method == "POST":
+        title = request.POST.get("title", "")
+        textarea = util.get_entry(title)
+        form = NewTextAreaForm(initial={'title': title, 'textarea': textarea})
+        return render(request, "encyclopedia/editPage.html", {
+            "form": form
+        })

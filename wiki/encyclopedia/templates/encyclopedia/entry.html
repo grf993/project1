@@ -5,6 +5,12 @@
 {% endblock %}
 
 {% block body %}
-    <p>{{ entry }}</p>
+    {{ entry }}
+    <br><br>
+    <form action="{% url 'getTitleFromEntry' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="title" value="{{ title }}">
+        <input type="submit" value="Edit Page">
+    </form>
 
 {% endblock %}
