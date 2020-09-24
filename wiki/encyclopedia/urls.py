@@ -7,5 +7,6 @@ urlpatterns = [
     path("search/", views.search, name="search"),
     path("newPage/", views.newPage, name="newPage"),
     path("editPage/", views.editPage, name="editPage"),
-    path("getTitleFromEntry/", views.getTitleFromEntry, name="getTitleFromEntry")
+    path("getTitleFromEntry/", views.getTitleFromEntry, name="getTitleFromEntry"),
+    path("randomPage/", views.randomPage, name="randomPage")
 ]

@@ -3,6 +3,7 @@ from . import util
 from django.shortcuts import redirect
 from django.urls import reverse
 from django import forms
+import random
 
 class NewTextAreaForm(forms.Form):
     title = forms.CharField(label="Title")
@@ -94,3 +95,9 @@ def getTitleFromEntry(request):
         return render(request, "encyclopedia/editPage.html", {
             "form": form
         })
+
+def randomPage(request):
+    pageList = util.list_entries()
+    randomNum = random.randint(0, len(pageList) - 1)
+    title = pageList[randomNum]
+    return entry(request, title)
