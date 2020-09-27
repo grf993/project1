@@ -1,10 +1,10 @@
-from django.shortcuts import render
 from . import util
-from django.shortcuts import redirect
-from django.urls import reverse
 from django import forms
-import random
+from django.shortcuts import redirect
+from django.shortcuts import render
+from django.urls import reverse
 import markdown2
+import random
 
 class NewTextAreaForm(forms.Form):
     title = forms.CharField(label="Title")
@@ -20,8 +20,9 @@ def entry(request, title):
     Return the entry text if util.get_entry finds a corresponding entry;
     return the 404 page if None is returned.
     '''
-    if util.get_entry(title):
-        md = markdown2.markdown(util.get_entry(title))
+    textEntry = util.get_entry(title)
+    if textEntry:
+        md = markdown2.markdown(textEntry)
         return render(request, "encyclopedia/entry.html", {
             "title": title,
             "entry": md
@@ -33,13 +34,16 @@ def entry(request, title):
 
 def search(request):
     searchText = request.GET.get('q')
+    # return page user searched for if exact match
     if util.get_entry(searchText):
         return entry(request, searchText)
     else:
         matches = []
-        for item in util.list_entries():
-            if searchText in item:
-                matches.append(item)
+        # add entry title to list if search text is contained in title
+        for title in util.list_entries():
+            if searchText in title:
+                matches.append(title)
+        # redirect to search results page with list of matches
         return render(request, "encyclopedia/search_results.html", {
             "searchText": searchText,
             "matches": matches
@@ -90,6 +94,11 @@ def editPage(request):
             })
 
 def getTitleFromEntry(request):
+    '''
+    Get title from entry's "Edit" button form and redirect to editPage.html.
+    Acts as the intermediary between the entry page and the edit page so that
+    the edit page only has to handle one POST (to itself).
+    '''
     if request.method == "POST":
         title = request.POST.get("title", "")
         textarea = util.get_entry(title)
